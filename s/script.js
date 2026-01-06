@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // Check if particles are enabled (default true)
 if (localStorage.getItem('particlesEnabled') !== 'false') {
     particlesJS("particles-js", {
@@ -14,6 +15,20 @@ if (localStorage.getItem('particlesEnabled') !== 'false') {
             },
             line_linked: { enable: false }, 
             color: { value: ["#ffffff", "#d0e8ff", "#9fb2cf", "#afebff", "#b0c8d8"] } 
+=======
+//particles
+particlesJS("particles-js", {
+    particles: {
+        number: { value: 70 },
+        shape: { type: "circle" },
+        opacity: { value: 1 }, 
+        size: { value: 2, random: true }, 
+        move: {
+            enable: true,
+            speed: 12, 
+            straight: false, 
+            out_mode: "out"
+>>>>>>> c8135acc6a3da545cb97b6c13f20909c48dbea53
         },
         interactivity: {
             detect_on: "canvas",
@@ -25,6 +40,7 @@ if (localStorage.getItem('particlesEnabled') !== 'false') {
     });
 }
 
+// panic key
 function isTypingInField(e){
     var el = e.target;
     if(!el) return false;
@@ -34,7 +50,7 @@ function isTypingInField(e){
     return false;
 }
 
-// panic key set to ` (next to 1 key)
+// also panic key set to ` (next to 1 key)
 window.addEventListener('keydown', function(e){
     if(e.ctrlKey || e.altKey || e.metaKey) return;
     if(isTypingInField(e)) return;
@@ -45,7 +61,7 @@ window.addEventListener('keydown', function(e){
         window.location.href = 'https://classroom.google.com/';
     }
 });
-
+// search bar enter
 window.addEventListener('DOMContentLoaded', function(){
     var searchBar = document.getElementById('searchBar');
     if(searchBar){
