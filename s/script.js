@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 // Check if particles are enabled (default true)
 if (localStorage.getItem('particlesEnabled') !== 'false') {
     particlesJS("particles-js", {
@@ -15,20 +14,6 @@ if (localStorage.getItem('particlesEnabled') !== 'false') {
             },
             line_linked: { enable: false }, 
             color: { value: ["#ffffff", "#d0e8ff", "#9fb2cf", "#afebff", "#b0c8d8"] } 
-=======
-//particles
-particlesJS("particles-js", {
-    particles: {
-        number: { value: 70 },
-        shape: { type: "circle" },
-        opacity: { value: 1 }, 
-        size: { value: 2, random: true }, 
-        move: {
-            enable: true,
-            speed: 12, 
-            straight: false, 
-            out_mode: "out"
->>>>>>> c8135acc6a3da545cb97b6c13f20909c48dbea53
         },
         interactivity: {
             detect_on: "canvas",
