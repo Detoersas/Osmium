@@ -227,7 +227,19 @@
                 console.log(`Embed: Init attempt ${initAttempt}/${maxInitRetries}`);
 
                 try {
-                    // Register service worker FIRST before Scramjet init
+                    const { ScramjetController } = $scramjetLoadController();
+                    const scramjet = new ScramjetController({
+                        prefix: basePath + "scramjet/",
+                        files: {
+                            wasm: 'https://cdn.jsdelivr.net/gh/Destroyed12121/Staticsj@main/JS/scramjet.wasm.wasm',
+                            all: 'https://cdn.jsdelivr.net/gh/Destroyed12121/Staticsj@main/JS/scramjet.all.js',
+                            sync: 'https://cdn.jsdelivr.net/gh/Destroyed12121/Staticsj@main/JS/scramjet.sync.js'
+                        }
+                    });
+                    if (!$scramjetLoadController) throw new Error('Scramjet controller not found');
+                    await scramjet.init();
+
+                    // Register service worker with error handling
                     let reg;
                     try {
                         if (!('serviceWorker' in navigator)) throw new Error('Service Worker not supported');
@@ -238,11 +250,6 @@
                     }
 
                     const wispUrl = localStorage.getItem('proxServer') || 'wss://dash.goip.de/wisp/';
-
-                    // Double-check serviceWorker is still available
-                    if (!('serviceWorker' in navigator)) {
-                        throw new Error('Service Worker support lost during initialization');
-                    }
 
                     // Wait for SW ready with timeout
                     const swReadyPromise = navigator.serviceWorker.ready;
@@ -256,58 +263,28 @@
                     reg.update().catch(e => console.warn("SW update check failed:", e));
 
                     // Wait for controller with timeout
-                    if (!navigator.serviceWorker?.controller) {
+                    if (!navigator.serviceWorker.controller) {
                         console.log("Embed: Waiting for SW controller...");
                         const controllerPromise = new Promise(resolve => {
                             const onControllerChange = () => {
-                                navigator.serviceWorker?.removeEventListener('controllerchange', onControllerChange);
+                                navigator.serviceWorker.removeEventListener('controllerchange', onControllerChange);
                                 resolve();
                             };
-                            navigator.serviceWorker?.addEventListener('controllerchange', onControllerChange);
+                            navigator.serviceWorker.addEventListener('controllerchange', onControllerChange);
                         });
                         const controllerTimeout = new Promise(resolve => setTimeout(resolve, 5000));
                         await Promise.race([controllerPromise, controllerTimeout]);
-                        
-                        // Check if we actually got a controller
-                        if (!navigator.serviceWorker?.controller) {
-                            console.warn("Embed: No SW controller after wait. Reloading page once...");
-                            // Check if we already reloaded (prevent infinite loops)
-                            const hasReloaded = sessionStorage.getItem('sw_reload_attempted');
-                            if (!hasReloaded) {
-                                sessionStorage.setItem('sw_reload_attempted', '1');
-                                window.location.reload();
-                                return; // Stop execution, page will reload
-                            } else {
-                                throw new Error("Service Worker failed to control page after reload");
-                            }
-                        }
                     }
-                    
-                    // Clear reload flag on successful initialization
-                    sessionStorage.removeItem('sw_reload_attempted');
 
-                    // Send config to SW with safety checks
-                    const sw = reg.active || navigator.serviceWorker?.controller;
+                    // Send config to SW
+                    const sw = reg.active || navigator.serviceWorker.controller;
                     if (sw) {
                         console.log("Embed: Sending config to SW:", wispUrl);
                         sw.postMessage({ type: 'config', wispurl: wispUrl });
                     }
-                    if (navigator.serviceWorker?.controller && navigator.serviceWorker.controller !== sw) {
+                    if (navigator.serviceWorker.controller && navigator.serviceWorker.controller !== sw) {
                         navigator.serviceWorker.controller.postMessage({ type: 'config', wispurl: wispUrl });
                     }
-
-                    // NOW initialize Scramjet after SW is ready
-                    const { ScramjetController } = $scramjetLoadController();
-                    const scramjet = new ScramjetController({
-                        prefix: basePath + "scramjet/",
-                        files: {
-                            wasm: 'https://cdn.jsdelivr.net/gh/Destroyed12121/Staticsj@main/JS/scramjet.wasm.wasm',
-                            all: 'https://cdn.jsdelivr.net/gh/Destroyed12121/Staticsj@main/JS/scramjet.all.js',
-                            sync: 'https://cdn.jsdelivr.net/gh/Destroyed12121/Staticsj@main/JS/scramjet.sync.js'
-                        }
-                    });
-                    if (!$scramjetLoadController) throw new Error('Scramjet controller not found');
-                    await scramjet.init();
 
                     // Setup BareMux connection with retry
                     let connection;
