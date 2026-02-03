@@ -1,5 +1,5 @@
-IF YOU ARE GOING TO DMCA EMAIL ME AT marko.vityk@gmail.com
-read privacy policy [here](https://marko.wiki.gd/privacy-policy.html)
+read privacy policy and dmca policy [here](https://marko.wiki.gd/privacy-policy.html)
+make sure to read the license
 ## Welcome to Marko's Classroom github repository!
 
 ### Marko's Classroom is a free website with
