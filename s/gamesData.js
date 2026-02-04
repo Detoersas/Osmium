@@ -82,6 +82,12 @@ let games = [
         "warning": "this doesn't work in firefox, also i cant remove time limits and refresh the game if you get an error"
     },
     {
+        "name": "good Geometry Dash",
+        "iframe": "/reload/geometrydash/index.html",
+        "img": "https://nowgg.fun/img/geodash.png",
+        "identifier": "geometrydash"
+    },
+    {
         "name": "Movies",
         "iframe": "/reactive/embed.html#https://watch.spencerdevs.xyz/",
         "img": "assets/movies.png",
