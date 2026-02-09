@@ -83,9 +83,11 @@ let games = [
     },
     {
         "name": "good Geometry Dash",
-        "iframe": "g/reload/geometrydash/index.html",
+        "iframe2": "g/reload/geometrydash/index.html",
         "img": "https://nowgg.fun/img/geodash.png",
-        "identifier": "geometrydash"
+        "identifier": "geometrydash",
+        "servers": 2,
+        "iframe": "https://script.google.com/macros/s/AKfycbydNb9Y8FIM3D0vcweKtYCYbjJcSXghedO6MN0aWbP5qIwamjjSkBDirvuMHR_6sc4/exec"
     },
     {
         "name": "Movies",
