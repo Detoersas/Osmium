@@ -25,6 +25,43 @@ if (localStorage.getItem('particlesEnabled') !== 'false') {
     });
 }
 
+/* --- Remove Ads if Disabled --- */
+(function(){
+    // Check ads setting immediately
+    if (localStorage.getItem('adsEnabled') === 'false') {
+        // Remove existing ad scripts
+        var adScript = document.getElementById('main-ad-script');
+        if (adScript) {
+            adScript.remove();
+        }
+        
+        // Prevent any future ad scripts from loading by monitoring DOM
+        var observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'childList') {
+                    mutation.addedNodes.forEach(function(node) {
+                        // Remove script tags that contain ad-related code
+                        if (node.tagName === 'SCRIPT') {
+                            var src = node.src || '';
+                            var text = node.textContent || '';
+                            // Check for common ad patterns
+                            if (src.includes('al5sm.com') || src.includes('nap5k.com') ||
+                                text.includes('al5sm.com') || text.includes('nap5k.com')) {
+                                node.remove();
+                            }
+                        }
+                    });
+                }
+            });
+        });
+        
+        observer.observe(document.documentElement, {
+            childList: true,
+            subtree: true
+        });
+    }
+})();
+
 // panic key
 function isTypingInField(e){
     var el = e.target;

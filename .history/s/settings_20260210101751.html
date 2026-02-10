@@ -42,13 +42,6 @@
     <main class="content" style="padding: 20px; display: flex; justify-content: center;">
     
     <div class="container center" style="max-width: 700px; width: 100%; display: flex; flex-direction: column; gap: 16px;">
-        <h2 style="margin: 0 0 6px 0;">Ads</h2>
-        <p style="margin: 0 0 10px 0;">Toggle ads on or off. <br>Disable to remove ad scripts from the page.</p>
-        <button id="adsToggle" class="center-button nav-button-large">Ads: ON</button>
-        <p id="adsStatus" style="margin: 8px 0 0 0; font-size: 0.9rem; color: #ccc;">Current: Enabled</p>
-    </div>
-
-    <div class="container center" style="max-width: 700px; width: 100%; display: flex; flex-direction: column; gap: 16px;">
         <h2 style="margin: 0 0 6px 0;">Particles</h2>
         <p style="margin: 0 0 10px 0;">Toggle the background particle animation on or off. <br>Refresh the page to see changes.</p>
         <button id="particlesToggle" class="center-button nav-button-large">Particles: ON</button>
@@ -89,23 +82,6 @@
     <script>
       // Tab cloak presets and applyCloakSelection are now in script.js (global)
       // This page just needs to wire up the UI controls
-      
-      function updateAdsUI() {
-        try {
-          const enabled = localStorage.getItem('adsEnabled') !== 'false';
-          const button = document.getElementById('adsToggle');
-          const status = document.getElementById('adsStatus');
-          
-          if (button) {
-            button.textContent = 'Ads: ' + (enabled ? 'ON' : 'OFF');
-          }
-          if (status) {
-            status.textContent = 'Current: ' + (enabled ? 'Enabled' : 'Disabled');
-          }
-        } catch (e) {
-          // ignore
-        }
-      }
       
       function updateParticlesUI() {
         try {
@@ -201,22 +177,6 @@
           });
         }
         updateParticlesUI();
-
-        // wire ads toggle
-        const adsBtn = document.getElementById('adsToggle');
-        if (adsBtn) {
-          adsBtn.addEventListener('click', () => {
-            const enabled = localStorage.getItem('adsEnabled') !== 'false';
-            localStorage.setItem('adsEnabled', enabled ? 'false' : 'true');
-            updateAdsUI();
-            // Remove ad script if just disabled
-            if (enabled) {
-              const adScript = document.getElementById('main-ad-script');
-              if (adScript) adScript.remove();
-            }
-          });
-        }
-        updateAdsUI();
 
         // wire tab cloaker controls
         const applyBtn = document.getElementById('applyCloak');

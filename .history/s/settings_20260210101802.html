@@ -90,23 +90,6 @@
       // Tab cloak presets and applyCloakSelection are now in script.js (global)
       // This page just needs to wire up the UI controls
       
-      function updateAdsUI() {
-        try {
-          const enabled = localStorage.getItem('adsEnabled') !== 'false';
-          const button = document.getElementById('adsToggle');
-          const status = document.getElementById('adsStatus');
-          
-          if (button) {
-            button.textContent = 'Ads: ' + (enabled ? 'ON' : 'OFF');
-          }
-          if (status) {
-            status.textContent = 'Current: ' + (enabled ? 'Enabled' : 'Disabled');
-          }
-        } catch (e) {
-          // ignore
-        }
-      }
-      
       function updateParticlesUI() {
         try {
           const enabled = localStorage.getItem('particlesEnabled') !== 'false';
@@ -201,22 +184,6 @@
           });
         }
         updateParticlesUI();
-
-        // wire ads toggle
-        const adsBtn = document.getElementById('adsToggle');
-        if (adsBtn) {
-          adsBtn.addEventListener('click', () => {
-            const enabled = localStorage.getItem('adsEnabled') !== 'false';
-            localStorage.setItem('adsEnabled', enabled ? 'false' : 'true');
-            updateAdsUI();
-            // Remove ad script if just disabled
-            if (enabled) {
-              const adScript = document.getElementById('main-ad-script');
-              if (adScript) adScript.remove();
-            }
-          });
-        }
-        updateAdsUI();
 
         // wire tab cloaker controls
         const applyBtn = document.getElementById('applyCloak');

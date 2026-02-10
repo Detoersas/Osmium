@@ -202,22 +202,6 @@
         }
         updateParticlesUI();
 
-        // wire ads toggle
-        const adsBtn = document.getElementById('adsToggle');
-        if (adsBtn) {
-          adsBtn.addEventListener('click', () => {
-            const enabled = localStorage.getItem('adsEnabled') !== 'false';
-            localStorage.setItem('adsEnabled', enabled ? 'false' : 'true');
-            updateAdsUI();
-            // Remove ad script if just disabled
-            if (enabled) {
-              const adScript = document.getElementById('main-ad-script');
-              if (adScript) adScript.remove();
-            }
-          });
-        }
-        updateAdsUI();
-
         // wire tab cloaker controls
         const applyBtn = document.getElementById('applyCloak');
         const resetBtn = document.getElementById('resetCloak');
