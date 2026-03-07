@@ -25,10 +25,10 @@ if (localStorage.getItem('particlesEnabled') !== 'false') {
     });
 }
 
-/* --- Remove Ads if Disabled --- */
+/*
 (function(){
     // Check ads setting immediately
-    if (localStorage.getItem('adsEnabled') === 'false' || localStorage.getItem('adsEnabled') === 'true' || localStorage.getItem('adsEnabled') === null ) {
+    if (localStorage.getItem('adsEnabled') === 'false') {
         // Remove existing ad scripts
         var adScript = document.getElementById('main-ad-script');
         if (adScript) {
@@ -61,6 +61,7 @@ if (localStorage.getItem('particlesEnabled') !== 'false') {
         });
     }
 })();
+*/
 
 // panic key
 function isTypingInField(e){
