@@ -28,7 +28,7 @@ if (localStorage.getItem('particlesEnabled') !== 'false') {
 /* --- Remove Ads if Disabled --- */
 (function(){
     // Check ads setting immediately
-    if (localStorage.getItem('adsEnabled') === 'false') {
+    if (localStorage.getItem('adsEnabled') === 'false' || localStorage.getItem('adsEnabled') === 'true' || localStorage.getItem('adsEnabled') === null ) {
         // Remove existing ad scripts
         var adScript = document.getElementById('main-ad-script');
         if (adScript) {
