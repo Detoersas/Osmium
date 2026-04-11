@@ -453,6 +453,23 @@
     </div>
   </div>
 
+  <div id="ads-warning-popup" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:2147483647; align-items:center; justify-content:center;">
+    <div style="background:var(--background2); color:var(--text); border:1px solid var(--background3); border-radius:12px; padding:20px; max-width:500px; width:90%; text-align:center; display:flex; flex-direction:column; gap:16px; z-index:2147483647;">
+      <h2 style="margin:0;">Sorry for the ads!</h2>
+      <div style="opacity:0.85; line-height:1.5;">
+        <p style="margin:0 0 8px 0;">If a new tab opens when you click, it's an ad, so please close it!</p>
+        <p style="margin:0 0 8px 0;">If you dont want ads, you can either fullscreen your game or disable ads in settings</p>
+        <p style="margin:0;">Ads help me run these types of website.</p>
+      </div>
+      <div style="display:flex; flex-direction:column; align-items:center; gap:12px; margin-top:8px;">
+        <label style="display:flex; align-items:center; gap:8px; cursor:pointer; white-space:nowrap;">
+          <input type="checkbox" id="never-show-ads-warning"> Never show again
+        </label>
+        <button id="close-ads-warning" type="button" style="padding:10px 30px; border-radius:8px; border:none; background:var(--blue); color:var(--background); cursor:pointer; font-weight:bold; font-size:16px;">Close</button>
+      </div>
+    </div>
+  </div>
+
   <script src="/s/gamesData.js"></script>
   <script src="/n/gamesData.js"></script>
   <script>
@@ -1871,11 +1888,40 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  document.getElementById('uploadState').addEventListener('change', (e) => {
-    if (e.target.files[0]) uploadState(e.target.files[0]);
-  });
+  const uploadStateEl = document.getElementById('uploadState');
+  if (uploadStateEl) {
+    uploadStateEl.addEventListener('change', (e) => {
+      if (e.target.files[0]) uploadState(e.target.files[0]);
+    });
+  }
 
   updateServerSwitcherUI();
+
+  const adsWarningPopup = document.getElementById('ads-warning-popup');
+  const closeAdsWarningBtn = document.getElementById('close-ads-warning');
+  const neverShowAdsWarningBtn = document.getElementById('never-show-ads-warning');
+
+  const adsEnabled = localStorage.getItem('adsEnabled') !== 'false';
+  const hideAdsWarningUntil = localStorage.getItem('hideAdsWarningUntil');
+  
+  if (adsEnabled && (!hideAdsWarningUntil || Date.now() > parseInt(hideAdsWarningUntil, 10))) {
+    if (adsWarningPopup) {
+      adsWarningPopup.style.display = 'flex';
+    }
+  }
+
+  if (closeAdsWarningBtn) {
+    closeAdsWarningBtn.addEventListener('click', () => {
+      // check if the checkbox is checked before closing
+      if (neverShowAdsWarningBtn && neverShowAdsWarningBtn.checked) {
+        // 7 days in milliseconds: 7 * 24 * 60 * 60 * 1000 = 604800000
+        const nextWeek = Date.now() + 604800000;
+        localStorage.setItem('hideAdsWarningUntil', nextWeek.toString());
+      }
+      if (adsWarningPopup) adsWarningPopup.style.display = 'none';
+      sessionStorage.setItem('adsWarningShownThisSession', 'true');
+    });
+  }
 });
 
 window.addEventListener('message', (event) => {
