@@ -1,8 +1,8 @@
 read privacy policy and dmca policy [here](https://marko.wiki.gd/privacy-policy.html)
 make sure to read the license
-## Welcome to Marko's Classroom github repository!
+## Welcome to Osmium github repository!
 
-### Marko's Classroom is a free website with
+### Osmium is a free website with
  - 300+ games
  - scramjet proxy
  - settings

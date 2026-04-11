@@ -49,8 +49,8 @@ self.addEventListener("message", ({ data }) => {
 // Fallback if config is never received (prevents 500 error)
 setTimeout(() => {
     if (!wispConfig.wispurl && resolveConfigReady) {
-        console.warn("SW: Config timeout, using default Wisp");
-        wispConfig.wispurl = "wss://dash.goip.de/wisp/";
+        console.warn("SW: Config timeout, using anura's Wisp");
+        wispConfig.wispurl = "wss://anura.pro/";
         resolveConfigReady();
         resolveConfigReady = null;
     }

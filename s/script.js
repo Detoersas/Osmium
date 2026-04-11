@@ -1,5 +1,87 @@
+/* --- Blob Cloak (top-level only) --- */
+(function(){
+    function escapeBlobAttr(value){
+        return String(value)
+            .replace(/&/g, '&amp;')
+            .replace(/"/g, '&quot;')
+            .replace(/</g, '&lt;');
+    }
+
+    function openBlobCloak(targetUrl){
+        try {
+            if (!targetUrl) return;
+            var safeUrl = escapeBlobAttr(targetUrl);
+            var html = '<!doctype html><html><head><meta charset="utf-8"><title>...</title><style>html,body{margin:0;height:100%;}iframe{width:100%;height:100%;border:0;}</style></head><body><iframe src="' + safeUrl + '" allow="fullscreen"></iframe></body></html>';
+            var blob = new Blob([html], { type: 'text/html' });
+            var blobUrl = URL.createObjectURL(blob);
+            localStorage.setItem('blobCloakLastUrl', targetUrl);
+            location.replace(blobUrl);
+        } catch (e) {
+            // ignore blob cloak errors
+        }
+    }
+
+    function exitBlobCloak(){
+        try {
+            var target = localStorage.getItem('blobCloakLastUrl') || '/index.html';
+            localStorage.setItem('blobCloakEnabled', 'false');
+            if (location.protocol === 'blob:') {
+                location.replace(target);
+            }
+        } catch (e) {
+            // ignore
+        }
+    }
+
+    function tryBlobCloak(){
+        try {
+            if (window.top !== window.self) return;
+            if (localStorage.getItem('blobCloakEnabled') !== 'true') return;
+            if (location.protocol === 'blob:') return;
+            openBlobCloak(location.href);
+        } catch (e) {
+            // ignore
+        }
+    }
+
+    window.openBlobCloak = openBlobCloak;
+    window.exitBlobCloak = exitBlobCloak;
+    tryBlobCloak();
+})();
+
+/* --- Non-blocking ads loader --- */
+(function(){
+    function loadMainAdsIfEnabled(){
+        try {
+            if (localStorage.getItem('adsEnabled') === 'false') return;
+            if (document.getElementById('main-ad-script')) return;
+
+            var adScript = document.createElement('script');
+            adScript.id = 'main-ad-script';
+            adScript.async = true;
+            adScript.dataset.zone = '10557680';
+            adScript.src = 'https://al5sm.com/tag.min.js';
+            (document.body || document.documentElement).appendChild(adScript);
+        } catch (e) {
+            // ignore ad script errors
+        }
+    }
+
+    window.loadMainAdsIfEnabled = loadMainAdsIfEnabled;
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', loadMainAdsIfEnabled, { once: true });
+    } else {
+        loadMainAdsIfEnabled();
+    }
+})();
+
 // Check if particles are enabled (default true)
-if (localStorage.getItem('particlesEnabled') !== 'false') {
+if (
+    localStorage.getItem('particlesEnabled') !== 'false' &&
+    typeof particlesJS === 'function' &&
+    document.getElementById('particles-js')
+) {
     particlesJS("particles-js", {
         particles: {
             number: { value: 70 },
@@ -96,6 +178,13 @@ window.addEventListener('DOMContentLoaded', function(){
             }
         });
     }
+
+    var gameButtonImages = document.querySelectorAll('.game-button img');
+    gameButtonImages.forEach(function(img, index){
+        if (!img.loading) img.loading = 'lazy';
+        img.decoding = 'async';
+        if (index < 12) img.fetchPriority = 'high';
+    });
 });
 
 /* --- Adaptive particle count based on FPS ---
@@ -409,7 +498,7 @@ window.toggleParticles = function() {
         
         var css = '';
         
-        // Hide "Marko's Classroom" text on mobile
+        // Hide "Osmium" text on mobile
         css += '.header-text { display: none !important; }';
         
         // Only make buttons smaller if screen is narrow (< 768px)

@@ -155,6 +155,8 @@
 
         let loadingTimeout = null;
         let skipButtonTimeout = null;
+        let activeProxyFrame = null;
+        let scramjetFrame = null;
 
         function showError(message) {
             if (loadingTimeout) clearTimeout(loadingTimeout);
@@ -172,6 +174,115 @@
             loadingContainer.style.visibility = 'hidden';
             iframeContainer.classList.add('loaded');
         }
+
+        function openEmbedDevTools(retries = 8) {
+            const win = activeProxyFrame?.contentWindow;
+            const doc = win?.document;
+
+            if (!win || !doc || !doc.body) {
+                if (retries > 0) {
+                    setTimeout(() => openEmbedDevTools(retries - 1), 250);
+                }
+                return;
+            }
+
+            if (win.eruda) {
+                win.eruda.show();
+                return;
+            }
+
+            if (doc.getElementById('eruda-script')) return;
+
+            const script = doc.createElement('script');
+            script.id = 'eruda-script';
+            script.src = 'https://cdn.jsdelivr.net/npm/eruda';
+            script.onload = () => {
+                if (win.eruda) {
+                    win.eruda.init();
+                    win.eruda.show();
+                }
+            };
+            doc.body.appendChild(script);
+        }
+
+        function normalizeProxyInput(input) {
+            if (!input) return null;
+            const trimmed = String(input).trim();
+            if (!trimmed) return null;
+            if (/^https?:\/\//i.test(trimmed)) return trimmed;
+            if (trimmed.includes('.') && !trimmed.includes(' ')) return `https://${trimmed}`;
+            return `https://search.brave.com/search?q=${encodeURIComponent(trimmed)}`;
+        }
+
+        function sendProxyMeta(meta) {
+            if (!meta) return;
+            try {
+                window.parent.postMessage({ type: 'proxy-meta', ...meta }, '*');
+            } catch (_err) {
+                // Ignore parent messaging errors
+            }
+        }
+
+        window.addEventListener('message', (event) => {
+            if (event.data?.type === 'reactive-inspect') {
+                openEmbedDevTools();
+                return;
+            }
+
+            if (event.data?.type === 'reactive-refresh') {
+                if (!activeProxyFrame) return;
+                try {
+                    activeProxyFrame.contentWindow.location.reload();
+                } catch (_err) {
+                    activeProxyFrame.src = activeProxyFrame.src;
+                }
+                return;
+            }
+
+            if (event.data?.type === 'proxy-back') {
+                if (scramjetFrame?.back) scramjetFrame.back();
+                return;
+            }
+
+            if (event.data?.type === 'proxy-forward') {
+                if (scramjetFrame?.forward) scramjetFrame.forward();
+                return;
+            }
+
+            if (event.data?.type === 'proxy-reload') {
+                if (scramjetFrame?.reload) {
+                    scramjetFrame.reload();
+                    return;
+                }
+                if (!activeProxyFrame) return;
+                try {
+                    activeProxyFrame.contentWindow.location.reload();
+                } catch (_err) {
+                    activeProxyFrame.src = activeProxyFrame.src;
+                }
+                return;
+            }
+
+            if (event.data?.type === 'proxy-navigate') {
+                const nextUrl = normalizeProxyInput(event.data?.url);
+                if (!nextUrl) return;
+                if (scramjetFrame?.go) {
+                    scramjetFrame.go(nextUrl);
+                    sendProxyMeta({ url: nextUrl });
+                    return;
+                }
+                if (!activeProxyFrame) return;
+                const base = activeProxyFrame.src.split('#')[0];
+                activeProxyFrame.src = `${base}#${encodeURIComponent(nextUrl)}`;
+                try {
+                    activeProxyFrame.contentWindow.location.reload();
+                } catch (_err) {
+                    // Ignore reload errors for cross-origin frames
+                }
+                sendProxyMeta({ url: nextUrl });
+                return;
+            }
+        });
 
         async function init() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -309,7 +420,15 @@
                     }
 
                     const frame = scramjet.createFrame();
+                    scramjetFrame = frame;
                     frame.frame.id = 'embed-frame';
+                    activeProxyFrame = frame.frame;
+
+                    if (frame.addEventListener) {
+                        frame.addEventListener('urlchange', (event) => {
+                            if (event?.url) sendProxyMeta({ url: event.url });
+                        });
+                    }
 
                     if (!shouldSkip) {
                         skipButtonTimeout = setTimeout(() => { skipBtn.style.display = 'inline-block'; }, 1500);
@@ -322,6 +441,14 @@
                             const elapsed = Date.now() - loadStartTime;
                             const remaining = Math.max(0, MIN_LOADING_TIME - elapsed);
                             setTimeout(showContent, remaining);
+
+                            try {
+                                const title = frame.frame.contentWindow?.document?.title;
+                                const url = frame.frame.contentWindow?.location?.href;
+                                if (title || url) sendProxyMeta({ title, url });
+                            } catch (_err) {
+                                // Ignore cross-origin access errors
+                            }
                         });
 
                         frame.frame.addEventListener('error', (err) => {
@@ -339,6 +466,7 @@
 
                     iframeContainer.appendChild(frame.frame);
                     frame.go(validatedUrl);
+                    sendProxyMeta({ url: validatedUrl });
 
                 } catch (err) {
                     console.error(`Embed: Init attempt ${initAttempt} failed:`, err);

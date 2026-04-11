@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-QYPYXGT59Q"></script>
-</script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -13,30 +14,20 @@
 </script>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3761613789479778" crossorigin="anonymous"></script>
   
-  <meta charset="UTF-8">
-    <title>Marko's Classroom</title>
-    <link rel="icon" href="/s/dogfavi.png">
+    <title>Osmium</title>
+    <link rel="icon" href="/s/logo.png">
     <link rel="stylesheet" href="/main.css">
-    <script src="/s/particles.js"></script>
+    <script defer src="/s/particles.js"></script>
     <script defer src="/s/script.js"></script>
     <link rel="canonical" href="https://tickles.store/s/settings.html">
 </head>
 <body>
-    <!--ads-->
-    <!-- popup <script>(function(s){s.dataset.zone='10553475',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>-->
-    <script>
-    // Check if ads are enabled BEFORE loading ad scripts
-    if (localStorage.getItem('adsEnabled') !== 'false') {
-        document.write('<script id="main-ad-script">(function(s){s.dataset.zone=\'10557680\',s.src=\'https://al5sm.com/tag.min.js\'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement(\'script\')));<\/script>');
-    }
-    </script>
-    <!--end ads-->
   <div id="particles-js"></div>
       <header class="header nav-container" role="banner">
         <a href="/" class="dog-icon-link">
-            <img src="/s/dog.png" class="header-img">
+            <img src="/s/logo.png" class="header-img">
         </a>
-        <h1 class="header-text header-title">Marko's Classroom</h1>
+        <h1 class="header-text header-title">Osmium</h1>
         <div class="nav-right-align" style="gap: 10px;">
         <button class="center-button nav-button-large right-fix" onclick="location.href='/s/apps.html'">Apps</button>
         <button class="center-button nav-button-large" onclick="location.href='/s/games.html'">Games</button>
@@ -80,7 +71,7 @@
         <button id="applyCloak" class="center-button nav-button-large">Apply cloak</button>
         <button id="resetCloak" class="center-button nav-button-large center center-container center-content">Reset</button>
         </div>
-        <p id="cloakStatus" style="margin: 8px 0 0 0; font-size: 0.9rem; color: #ccc;">Current: Marko's Classroom</p>
+        <p id="cloakStatus" style="margin: 8px 0 0 0; font-size: 0.9rem; color: #ccc;">Current: Osmium</p>
     </div>
 
     <div class="container center setting-container" style="max-width: 700px; width: 100%; display: flex; flex-direction: column; gap: 16px;">
@@ -88,6 +79,18 @@
         <p style="margin: 0 0 10px 0;">Double-click the button to open this page inside an about:blank window while redirecting the current tab.</p>
         <button id="cloaker" class="center-button nav-button-large" style="width: 100%;">Cloak (double-click)</button>
         <p style="margin-top: 10px; font-size: 0.9rem; color: #ccc;">If the popup is blocked, allow popups for this site and try again.</p>
+    </div>
+
+    <div id="wispSettings" class="container center setting-container" style="max-width: 700px; width: 100%; display: flex; flex-direction: column; gap: 16px;">
+      <h2 style="margin: 0 0 6px 0;">Proxy WISP Server</h2>
+      <p style="margin: 0 0 10px 0;">Choose or add a WISP server used by Proxy. Default is Rhw's Wisp.</p>
+      <div id="wispServerList" style="display: flex; flex-direction: column; gap: 10px;"></div>
+      <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+        <input id="customWispInput" type="text" placeholder="wss://your-wisp-server.com/wisp/" class="center-button nav-button-large" style="flex: 1 1 340px; min-width: 220px; text-align: left;" />
+        <button id="saveCustomWisp" class="center-button nav-button-large">Add</button>
+        <button id="resetWispDefault" class="center-button nav-button-large">Reset to default</button>
+      </div>
+      <p id="wispStatus" style="margin: 8px 0 0 0; font-size: 0.9rem; color: #ccc;">Current: Rhw's Wisp</p>
     </div>
     
     </main>
@@ -145,6 +148,124 @@
         } catch (e) {
           // ignore
         }
+      }
+
+      const DEFAULT_WISP = 'wss://wisp.rhw.one/wisp/';
+      const WISP_SERVERS = [
+        { name: "Rhw's Wisp", url: 'wss://wisp.rhw.one/wisp/' },
+        { name: "Anura's Wisp", url: 'wss://anura.pro/' }
+      ];
+
+      function getStoredWisps() {
+        try { return JSON.parse(localStorage.getItem('customWisps') || '[]'); }
+        catch { return []; }
+      }
+
+      function getCurrentWisp() {
+        return localStorage.getItem('proxServer') || DEFAULT_WISP;
+      }
+
+      function setWisp(url) {
+        localStorage.setItem('proxServer', url);
+        updateWispUI();
+      }
+
+      function deleteCustomWisp(urlToDelete) {
+        const nextCustom = getStoredWisps().filter(w => w.url !== urlToDelete);
+        localStorage.setItem('customWisps', JSON.stringify(nextCustom));
+
+        if (getCurrentWisp() === urlToDelete) {
+          setWisp(DEFAULT_WISP);
+          return;
+        }
+
+        updateWispUI();
+      }
+
+      function updateWispUI() {
+        if (!localStorage.getItem('proxServer')) {
+          localStorage.setItem('proxServer', DEFAULT_WISP);
+        }
+
+        const list = document.getElementById('wispServerList');
+        const status = document.getElementById('wispStatus');
+        if (!list || !status) return;
+
+        list.innerHTML = '';
+        const current = getCurrentWisp();
+        const all = [...WISP_SERVERS, ...getStoredWisps()];
+
+        all.forEach((server, index) => {
+          const isCustom = index >= WISP_SERVERS.length;
+          const isActive = server.url === current;
+
+          const row = document.createElement('div');
+          row.style.cssText = 'display:flex; justify-content:space-between; align-items:center; gap:10px; border:1px solid #ffffff40; border-radius:10px; padding:10px;';
+
+          const left = document.createElement('div');
+          left.style.cssText = 'display:flex; flex-direction:column; gap:4px; min-width:0;';
+
+          const name = document.createElement('div');
+          name.textContent = server.name + (isActive ? ' (Current)' : '');
+          name.style.fontWeight = '600';
+
+          const url = document.createElement('div');
+          url.textContent = server.url;
+          url.style.cssText = 'font-size:0.85rem; color:#ccc; word-break:break-all;';
+
+          left.appendChild(name);
+          left.appendChild(url);
+
+          const right = document.createElement('div');
+          right.style.cssText = 'display:flex; gap:8px; align-items:center; flex-wrap:wrap;';
+
+          if (!isActive) {
+            const useBtn = document.createElement('button');
+            useBtn.className = 'center-button nav-button-large';
+            useBtn.textContent = 'Use';
+            useBtn.onclick = () => setWisp(server.url);
+            right.appendChild(useBtn);
+          }
+
+          if (isCustom) {
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'center-button nav-button-large';
+            removeBtn.textContent = 'Remove';
+            removeBtn.onclick = () => deleteCustomWisp(server.url);
+            right.appendChild(removeBtn);
+          }
+
+          row.appendChild(left);
+          row.appendChild(right);
+          list.appendChild(row);
+        });
+
+        const currentName = all.find(s => s.url === current)?.name || current;
+        status.textContent = 'Current: ' + currentName;
+      }
+
+      function saveCustomWisp() {
+        const input = document.getElementById('customWispInput');
+        if (!input) return;
+
+        const url = input.value.trim();
+        if (!url) return;
+        if (!url.startsWith('wss://') && !url.startsWith('ws://')) {
+          alert('URL must start with wss:// or ws://');
+          return;
+        }
+
+        const all = [...WISP_SERVERS, ...getStoredWisps()];
+        if (all.some(w => w.url === url)) {
+          alert('That WISP server is already added.');
+          return;
+        }
+
+        const customWisps = getStoredWisps();
+        customWisps.push({ name: `Custom ${customWisps.length + 1}`, url });
+        localStorage.setItem('customWisps', JSON.stringify(customWisps));
+        input.value = '';
+        updateWispUI();
       }
 
       // Opens a new about:blank tab, loads this page in an iframe there, and redirects the current tab
@@ -245,6 +366,24 @@
         const cloakButton = document.getElementById('cloaker');
         if (cloakButton) {
           cloakButton.addEventListener('dblclick', openCloak);
+        }
+
+        const addWispBtn = document.getElementById('saveCustomWisp');
+        if (addWispBtn) addWispBtn.addEventListener('click', saveCustomWisp);
+
+        const resetWispBtn = document.getElementById('resetWispDefault');
+        if (resetWispBtn) {
+          resetWispBtn.addEventListener('click', () => {
+            localStorage.setItem('proxServer', DEFAULT_WISP);
+            updateWispUI();
+          });
+        }
+
+        updateWispUI();
+
+        if (window.location.hash === '#wisp') {
+          const section = document.getElementById('wispSettings');
+          if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
       });
     </script>
