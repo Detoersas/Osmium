@@ -12,6 +12,43 @@
         import * as BareMux from "https://cdn.jsdelivr.net/npm/@mercuryworkshop/bare-mux/dist/index.mjs";
         window.BareMux = BareMux;
     </script>
+    <script>
+        (function(){
+            function escapeBlobAttr(value){
+                return String(value)
+                    .replace(/&/g, '&amp;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/</g, '&lt;');
+            }
+
+            function openBlobCloak(targetUrl){
+                try {
+                    if (!targetUrl) return;
+                    var safeUrl = escapeBlobAttr(targetUrl);
+                    var html = '<!doctype html><html><head><meta charset="utf-8"><title>...</title><style>html,body{margin:0;height:100%;}iframe{width:100%;height:100%;border:0;}</style></head><body><iframe src="' + safeUrl + '" allow="fullscreen"></iframe></body></html>';
+                    var blob = new Blob([html], { type: 'text/html' });
+                    var blobUrl = URL.createObjectURL(blob);
+                    localStorage.setItem('blobCloakLastUrl', targetUrl);
+                    location.replace(blobUrl);
+                } catch (e) {
+                    // ignore blob cloak errors
+                }
+            }
+
+            function tryBlobCloak(){
+                try {
+                    if (window.top !== window.self) return;
+                    if (localStorage.getItem('blobCloakEnabled') !== 'true') return;
+                    if (location.protocol === 'blob:') return;
+                    openBlobCloak(location.href);
+                } catch (e) {
+                    // ignore
+                }
+            }
+
+            tryBlobCloak();
+        })();
+    </script>
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>
     <link rel="canonical" href="https://tickles.store/reactive">

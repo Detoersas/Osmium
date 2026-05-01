@@ -1,7 +1,7 @@
 // =====================================================
 // CONFIGURATION
 // =====================================================
-const DEFAULT_WISP = "wss://anura.pro/";
+const DEFAULT_WISP = "wss://wisp.rhw.one/wisp/";
 const WISP_SERVERS = [
     { name: "Rhw's Wisp", url: "wss://wisp.rhw.one/wisp/" }, //note that this also works with uv static and sj static
     { name: "Anura's Wisp", url: "wss://anura.pro/" }
@@ -347,17 +347,7 @@ function updateLoadingBar(tab, percent) {
 // SETTINGS & WISP
 // =====================================================
 function openSettings() {
-    const modal = document.getElementById('wisp-settings-modal');
-    modal.classList.remove('hidden');
-
-    document.getElementById('close-wisp-modal').onclick = () => modal.classList.add('hidden');
-    document.getElementById('save-custom-wisp').onclick = saveCustomWisp;
-
-    modal.onclick = (e) => {
-        if (e.target === modal) modal.classList.add('hidden');
-    };
-
-    renderServerList();
+    window.location.href = '/s/settings.html#wisp';
 }
 
 function getStoredWisps() {
