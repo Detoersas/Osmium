@@ -24,5 +24,5 @@ thanks for reading
 also we are open to contributions ig via pull requests
 this website is fully static
 
-current version 2.4 i think
-if contact is required email me at marko.vityk@gmail.com
+current version 3.1 i think
+if contact is required email me at contactosmium@duck.com
