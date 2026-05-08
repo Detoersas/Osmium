@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta property="og:title" content="Osmium" />
-  <meta property="og:description" content="Unified dashboard for games, apps, and proxy." />
-  <title>Osmium</title>
-  <link rel="icon" href="/logo.png" />
+  <meta property="title" content="Online Educational Learning Platform and Teaching Resources" />
+  <meta property="description" content="A comprehensive educational platform for learning and teaching Mathematics, Science, English, History, Literature, Writing, Reading, Social Studies, and Geography!" />
+  <title>Google Classroom</title>
+  <link rel="icon" href="/assets/classroom.ico" />
   <link rel="stylesheet" href="/style.css" />
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-QYPYXGT59Q"></script>
@@ -66,26 +66,6 @@
     }
 
     tryBlobCloak();
-
-    function loadIndexAds() {
-      try {
-        if (localStorage.getItem('adsEnabled') === 'false') return;
-        if (document.getElementById('main-ad-script')) return;
-        var adScript = document.createElement('script');
-        adScript.id = 'main-ad-script';
-        adScript.async = true;
-        adScript.dataset.zone = '10557680';
-        adScript.src = 'https://al5sm.com/tag.min.js';
-        (document.body || document.documentElement).appendChild(adScript);
-      } catch (e) {
-        // ignore ad script errors
-      }
-    }
-
-    function removeIndexAds() {
-      var adScript = document.getElementById('main-ad-script');
-      if (adScript) adScript.remove();
-    }
   </script>
   <style>
     [data-lucide] { width: calc(18px * var(--ui-scale, 1)); height: calc(18px * var(--ui-scale, 1)); stroke: white; }
@@ -251,7 +231,7 @@
         <h1>Privacy Policy & Terms</h1>
         <div class="input-container" style="margin-bottom: 20px;">
           <button class="category-btn" onclick="openPage('settings-page')" type="button">
-            ← Back to Settings
+            Back to Settings
           </button>
         </div>
 
@@ -340,12 +320,6 @@
               </div>
             </div>
             <div class="setting-card">
-              <h2>Ads</h2>
-              <p>Toggle ads on or off.</p>
-              <button id="index-ads-toggle">Ads: ON</button>
-              <p id="index-ads-status">Current: Enabled</p>
-            </div>
-            <div class="setting-card">
               <h2>Particles</h2>
               <p>Disabling particles improves performance for low-end devices.</p>
               <div class="particles-controls">
@@ -399,7 +373,6 @@
             </div>
             <div class="setting-card">
               <h2>blob: Cloaking</h2>
-              <p>Open the site inside a blob URL wrapper.</p>
               <div class="aboutblank-button-row">
                 <button id="enableBlobCloak" onclick="enableBlobCloak()">Enable</button>
                 <button id="disableBlobCloak" onclick="disableBlobCloak()">Disable</button>
@@ -423,7 +396,7 @@
                 <button id="index-apply-cloak">Apply cloak</button>
                 <button id="index-reset-cloak">Reset</button>
               </div>
-              <p id="index-cloak-status">Current: Osmium</p>
+              <p id="index-cloak-status">Current: Google Classroom</p>
             </div>
             <div class="setting-card">
               <h2>WISP Server</h2>
@@ -448,23 +421,6 @@
       <p style="margin:0 0 12px 0; opacity:0.85;">Allow popups for this site to use about:blank cloaking.</p>
       <div style="display:flex; gap:8px; justify-content:flex-end;">
         <button type="button" onclick="hidePopupWarning()">OK</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="ads-warning-popup" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:2147483647; align-items:center; justify-content:center;">
-    <div style="background:var(--background2); color:var(--text); border:1px solid var(--background3); border-radius:12px; padding:20px; max-width:500px; width:90%; text-align:center; display:flex; flex-direction:column; gap:16px; z-index:2147483647;">
-      <h2 style="margin:0;">Sorry for the ads!</h2>
-      <div style="opacity:0.85; line-height:1.5;">
-        <p style="margin:0 0 8px 0;">If a new tab opens when you click, it's an ad, so please close it!</p>
-        <p style="margin:0 0 8px 0;">If you dont want ads, you can either fullscreen your game or disable ads in settings</p>
-        <p style="margin:0;">Ads help me run these types of website.</p>
-      </div>
-      <div style="display:flex; flex-direction:column; align-items:center; gap:12px; margin-top:8px;">
-        <label style="display:flex; align-items:center; gap:8px; cursor:pointer; white-space:nowrap;">
-          <input type="checkbox" id="never-show-ads-warning"> Never show again
-        </label>
-        <button id="close-ads-warning" type="button" style="padding:10px 30px; border-radius:8px; border:none; background:var(--blue); color:var(--background); cursor:pointer; font-weight:bold; font-size:16px;">Close</button>
       </div>
     </div>
   </div>
@@ -1019,17 +975,8 @@ function closeProxyTab(tabId) {
       return;
   }
 
-  // 3. We closed the ACTIVE tab. Switch to a neighbor.
-  // Since we already removed the item at existingIndex, the item that is NOW at existingIndex
-  // was previously at existingIndex + 1 (the right neighbor).
-  // The item at existingIndex - 1 is the left neighbor.
-  // Prefer going left (index - 1), but if we closed the first tab (index 0), go to new index 0 (right).
-  
-  let nextIndex = existingIndex - 1;
-  if (nextIndex < 0) nextIndex = 0; // If we closed the first tab, pick the new first tab
-  if (nextIndex >= proxyTabs.length) nextIndex = proxyTabs.length - 1; // Safety check
-
-  switchProxyTab(proxyTabs[nextIndex].id);
+  // 3. Fallback to home page when closing active tab
+  openPage('home-page');
 }
 
 function updateProxyTabsUI() {
@@ -1139,7 +1086,7 @@ function addEmbedTab(tabId, title, url, options = {}) {
   const tab = document.createElement('button');
   tab.className = 'tab-btn';
   tab.id = `${tabId}-tab`;
-  tab.innerHTML = `<div class='left'><span class='icon'><img class='tab-favicon' src='${tabIconSrc}' alt='' onerror="this.src='${DEFAULT_GAME_IMAGE}'"></span><p>${title}</p></div><button class='close-tab' onclick="closeTab('${tabId}')">✕</button>`;
+  tab.innerHTML = `<div class='left'><span class='icon'><img class='tab-favicon' src='${tabIconSrc}' alt='' onerror="this.src='${DEFAULT_GAME_IMAGE}'"></span><p>${title}</p></div><button class='close-tab' onclick="event.stopPropagation(); closeTab('${tabId}')">✕</button>`;
   tab.onclick = () => openPage(`${tabId}-embed`);
   tabsContainer.appendChild(tab);
 
@@ -1203,13 +1150,7 @@ function closeTab(id) {
       return;
   }
 
-  // 2. If we closed the active tab, switch to the nearest neighbor (previous or next)
-  if (nextTabId && document.getElementById(`${nextTabId}-embed`)) {
-    openPage(`${nextTabId}-embed`);
-    return;
-  }
-
-  // 3. If no tabs left, go home.
+  // 3. Fallback: go home.
   openPage('home-page');
 }
 
@@ -1373,7 +1314,7 @@ function setTheme(theme) {
 }
 
 function setTitle(title) {
-  document.title = title || "Osmium";
+  document.title = title || "Google Classroom";
   const tab = JSON.parse(localStorage.getItem('tab') || '{}');
   if (title) tab.title = title; else delete tab.title;
   localStorage.setItem('tab', JSON.stringify(tab));
@@ -1388,8 +1329,8 @@ function setFavicon(icon) {
 }
 
 const INDEX_DEFAULT_CLOAK = {
-  title: "Osmium",
-  icon: '/logo.png'
+  title: "Google Classroom",
+  icon: '/assets/classroom.ico'
 };
 
 const INDEX_CLOAKS = {
@@ -1437,17 +1378,6 @@ function updateIndexCloakUI() {
     if (picker) picker.value = 'google';
     if (status) status.textContent = `Current: ${INDEX_DEFAULT_CLOAK.title}`;
   }
-}
-
-function updateIndexAdsUI() {
-  if (localStorage.getItem('adsEnabled') === null) {
-    localStorage.setItem('adsEnabled', 'true');
-  }
-  const enabled = localStorage.getItem('adsEnabled') !== 'false';
-  const button = document.getElementById('index-ads-toggle');
-  const status = document.getElementById('index-ads-status');
-  if (button) button.textContent = `Ads: ${enabled ? 'ON' : 'OFF'}`;
-  if (status) status.textContent = `Current: ${enabled ? 'Enabled' : 'Disabled'}`;
 }
 
 const INDEX_DEFAULT_WISP = 'wss://wisp.rhw.one/wisp/';
@@ -1599,8 +1529,8 @@ function addIndexCustomWisp() {
 }
 
 function resetTab() {
-  setTitle("Osmium");
-  setFavicon('/logo.png');
+  setTitle("Google Classroom");
+  setFavicon('/assets/classroom.ico');
   localStorage.setItem('tab', JSON.stringify({}));
 }
 
@@ -1758,22 +1688,6 @@ document.addEventListener('DOMContentLoaded', () => {
       updateServerSwitcherUI();
     });
   }
-
-  const adsToggleBtn = document.getElementById('index-ads-toggle');
-  if (adsToggleBtn) {
-    adsToggleBtn.addEventListener('click', () => {
-      const enabled = localStorage.getItem('adsEnabled') !== 'false';
-      localStorage.setItem('adsEnabled', enabled ? 'false' : 'true');
-      updateIndexAdsUI();
-      if (enabled) {
-        removeIndexAds();
-      } else {
-        loadIndexAds();
-      }
-    });
-  }
-  updateIndexAdsUI();
-  loadIndexAds();
 
   const cloakPicker = document.getElementById('index-cloak-picker');
   const applyCloakBtn = document.getElementById('index-apply-cloak');
@@ -1933,32 +1847,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   updateServerSwitcherUI();
-
-  const adsWarningPopup = document.getElementById('ads-warning-popup');
-  const closeAdsWarningBtn = document.getElementById('close-ads-warning');
-  const neverShowAdsWarningBtn = document.getElementById('never-show-ads-warning');
-
-  const adsEnabled = localStorage.getItem('adsEnabled') !== 'false';
-  const hideAdsWarningUntil = localStorage.getItem('hideAdsWarningUntil');
-  
-  if (adsEnabled && (!hideAdsWarningUntil || Date.now() > parseInt(hideAdsWarningUntil, 10))) {
-    if (adsWarningPopup) {
-      adsWarningPopup.style.display = 'flex';
-    }
-  }
-
-  if (closeAdsWarningBtn) {
-    closeAdsWarningBtn.addEventListener('click', () => {
-      // check if the checkbox is checked before closing
-      if (neverShowAdsWarningBtn && neverShowAdsWarningBtn.checked) {
-        // 7 days in milliseconds: 7 * 24 * 60 * 60 * 1000 = 604800000
-        const nextWeek = Date.now() + 604800000;
-        localStorage.setItem('hideAdsWarningUntil', nextWeek.toString());
-      }
-      if (adsWarningPopup) adsWarningPopup.style.display = 'none';
-      sessionStorage.setItem('adsWarningShownThisSession', 'true');
-    });
-  }
 });
 
 window.addEventListener('message', (event) => {

@@ -47,6 +47,12 @@
 
 let games = [
     {
+        "name": "Suggestions",
+        "iframe": "https://forms.gle/DKQjmHYoeGainAoB9",
+        "img": "https://www.gstatic.com/images/branding/product/1x/forms_512dp.png",
+        "identifier": "suggestions",
+    },
+    {
         "name": "Police Chase",
         "iframe": "/g/load/police-chase/index.html",
         "img": "/g/load/police-chase/blacktop.jpg",

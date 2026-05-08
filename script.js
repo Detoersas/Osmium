@@ -49,33 +49,6 @@
     tryBlobCloak();
 })();
 
-/* --- Non-blocking ads loader --- */
-(function(){
-    function loadMainAdsIfEnabled(){
-        try {
-            if (localStorage.getItem('adsEnabled') === 'false') return;
-            if (document.getElementById('main-ad-script')) return;
-
-            var adScript = document.createElement('script');
-            adScript.id = 'main-ad-script';
-            adScript.async = true;
-            adScript.dataset.zone = '10557680';
-            adScript.src = 'https://al5sm.com/tag.min.js';
-            (document.body || document.documentElement).appendChild(adScript);
-        } catch (e) {
-            // ignore ad script errors
-        }
-    }
-
-    window.loadMainAdsIfEnabled = loadMainAdsIfEnabled;
-
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', loadMainAdsIfEnabled, { once: true });
-    } else {
-        loadMainAdsIfEnabled();
-    }
-})();
-
 // Check if particles are enabled (default true)
 if (
     localStorage.getItem('particlesEnabled') !== 'false' &&
@@ -106,43 +79,6 @@ if (
         }
     });
 }
-
-/* --- Remove Ads if Disabled --- */
-(function(){
-    // Check ads setting immediately
-    if (localStorage.getItem('adsEnabled') === 'false') {
-        // Remove existing ad scripts
-        var adScript = document.getElementById('main-ad-script');
-        if (adScript) {
-            adScript.remove();
-        }
-        
-        // Prevent any future ad scripts from loading by monitoring DOM
-        var observer = new MutationObserver(function(mutations) {
-            mutations.forEach(function(mutation) {
-                if (mutation.type === 'childList') {
-                    mutation.addedNodes.forEach(function(node) {
-                        // Remove script tags that contain ad-related code
-                        if (node.tagName === 'SCRIPT') {
-                            var src = node.src || '';
-                            var text = node.textContent || '';
-                            // Check for common ad patterns
-                            if (src.includes('al5sm.com') || src.includes('nap5k.com') ||
-                                text.includes('al5sm.com') || text.includes('nap5k.com')) {
-                                node.remove();
-                            }
-                        }
-                    });
-                }
-            });
-        });
-        
-        observer.observe(document.documentElement, {
-            childList: true,
-            subtree: true
-        });
-    }
-})();
 
 // panic key
 function isTypingInField(e){
